@@ -155,3 +155,16 @@ def user_posts(username):
     return render_template('user_posts.html', posts=posts, user=user)
 
 
+#trial
+@app.route("/comment/<string:comment>")
+def comment(comment):
+        # oldest comments first
+    for comment in Comment.query.order_by(Comment.timestamp.asc()):
+        print('{}: {}'.format(comment.author, comment.text))
+
+    # newest comments first
+    for comment in Comment.query.order_by(Comment.timestamp.desc()):
+        print('{}: {}'.format(comment.author, comment.text))
+    comment = Comment(text='Hello, world!', author='alice')
+    db.session.add(comment)
+    db.session.commit()
