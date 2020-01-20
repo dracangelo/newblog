@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
-from flaskblog.models import User, Post
+from flaskblog.models import User, Post, Comment
 from flask_login import login_user, current_user, logout_user, login_required
 
 
@@ -107,9 +107,20 @@ def new_post():
                            form=form, legend='New Post')
 
 
-@app.route("/post/<int:post_id>")
+@app.route("/post/<int:post_id>", methods=['GET', 'POST'])
 def post(post_id):
     post = Post.query.get_or_404(post_id)
+    #trial
+    if request.method == 'POST':
+        email = request.form.get('email')
+        content = request.form.get('content')
+        comment = Comment(email=email, content=content, post_id=post_id)
+        db.session.add(comment)
+        flash('Your comment has been posted','success')
+        db.session.commit()
+        return redirect(request.url)
+
+
     return render_template('post.html', title=post.title, post=post)
 
 
@@ -154,17 +165,3 @@ def user_posts(username):
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
 
-
-#trial
-@app.route("/comment/<string:comment>")
-def comment(comment):
-        # oldest comments first
-    for comment in Comment.query.order_by(Comment.timestamp.asc()):
-        print('{}: {}'.format(comment.author, comment.text))
-
-    # newest comments first
-    for comment in Comment.query.order_by(Comment.timestamp.desc()):
-        print('{}: {}'.format(comment.author, comment.text))
-    comment = Comment(text='Hello, world!', author='alice')
-    db.session.add(comment)
-    db.session.commit()

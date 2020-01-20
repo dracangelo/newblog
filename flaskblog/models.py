@@ -32,6 +32,11 @@ class Post(db.Model):
 #trial and error
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(140))
-    author = db.Column(db.String(32))
-    timestamp = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    email = db.Column(db.String(120), unique=False, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    status = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return f"Comment('{self.username}', '{self.email}', '{self.image_file}')"
