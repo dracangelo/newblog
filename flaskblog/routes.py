@@ -6,19 +6,18 @@ from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, CommentForm
 from flaskblog.models import User, Post, Comment
 from flask_login import login_user, current_user, logout_user, login_required
-
+from flaskblog import request
 
 @app.route("/")
 @app.route("/home")
 def home():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    # page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate( per_page=5)
     return render_template('home.html', posts=posts)
-
-
 @app.route("/about")
 def about():
-    return render_template('about.html', title='About')
+    quote =request.get_quote()
+    return render_template('about.html', title='About', quote=quote)
 
 
 @app.route("/register", methods=['GET', 'POST'])
