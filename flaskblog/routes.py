@@ -12,12 +12,13 @@ from flaskblog import request
 @app.route("/home")
 def home():
     # page = request.args.get('page', 1, type=int)
+    quote =request.get_quote()
     posts = Post.query.order_by(Post.date_posted.desc()).paginate( per_page=5)
-    return render_template('home.html', posts=posts)
+    return render_template('home.html', posts=posts,quote=quote)
 @app.route("/about")
 def about():
-    quote =request.get_quote()
-    return render_template('about.html', title='About', quote=quote)
+    
+    return render_template('about.html', title='About', )
 
 
 @app.route("/register", methods=['GET', 'POST'])
